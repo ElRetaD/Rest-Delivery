@@ -1,0 +1,147 @@
+
+/* src/components/Layout/Navbar.css */
+
+.navbar {
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-logo {
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.navbar-logo:hover {
+  color: #667eea;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: 0.3s;
+}
+
+.nav-link:hover {
+  color: #667eea;
+}
+
+.nav-link.active {
+  color: #667eea;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #667eea;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  position: relative;
+  color: #4b5563;
+  transition: 0.3s;
+}
+
+.nav-icon-btn:hover {
+  color: #667eea;
+  transform: scale(1.1);
+}
+
+.cart-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ef4444;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #4b5563;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-menu {
+    display: none;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 2rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .mobile-nav-link {
+    background: none;
+    border: none;
+    padding: 1rem 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #4b5563;
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    color: #667eea;
+  }
+}

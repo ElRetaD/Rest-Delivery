@@ -1,0 +1,15 @@
+/* src/components/Dashboard/TopDishesChart.css */
+
+.top-dishes-chart {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.top-dishes-chart h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+}

@@ -1,0 +1,76 @@
+/* src/components/Layout/Header.css */
+
+.header {
+  height: 70px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-shadow: 0 2px 10px rgba(255, 0, 0, 0.05);
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.lang-btn {
+  background: #f5f7fa;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #4b5563;
+  transition: 0.2s;
+}
+
+.lang-btn:hover {
+  background: #e5e7eb;
+  transform: scale(1.05);
+}
+
+.icon-btn {
+  background: #f5f7fa;
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: #e5e7eb;
+}
+
+.badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  font-weight: 600;
+}
