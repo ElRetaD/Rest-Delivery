@@ -3,6 +3,7 @@
 import React from 'react';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useSettings } from '../context/SettingsContext';
 import './CartPage.css';
 
 const CartPage = ({ setCurrentPage }) => {
@@ -14,8 +15,9 @@ const CartPage = ({ setCurrentPage }) => {
     removeFromCart,
     clearCart,
   } = useCart();
+  const { settings } = useSettings();
 
-  const deliveryFee = 15;
+  const deliveryFee = total >= (settings.freeDeliveryThreshold || 100) ? 0 : (settings.deliveryFee || 15);
   const finalTotal = total + deliveryFee;
 
   if (cart.length === 0) {
@@ -26,7 +28,7 @@ const CartPage = ({ setCurrentPage }) => {
             <ShoppingBag size={80} />
             <h2>Votre panier est vide</h2>
             <p>Ajoutez des plats délicieux à votre panier</p>
-            <button 
+            <button
               className="browse-menu-btn"
               onClick={() => setCurrentPage('menu')}
             >
@@ -64,19 +66,29 @@ const CartPage = ({ setCurrentPage }) => {
                 <div className="cart-item-details">
                   <h3>{item.name}</h3>
                   {item.nameAr && <p className="item-name-ar">{item.nameAr}</p>}
-                  <p className="item-price">{item.price} DH</p>
+                  {item.selectedSize && (
+                    <p className="item-size" style={{ fontSize: '0.85rem', color: '#6B7280', marginTop: '0.25rem' }}>
+                      Taille: {item.selectedSize === 'petite' ? 'Petite' : 'Moyenne'}
+                    </p>
+                  )}
+                  {item.selectedOption && (
+                    <p className="item-option" style={{ fontSize: '0.85rem', color: '#6B7280', marginTop: '0.25rem' }}>
+                      Option: {item.selectedOption === 'seul' ? 'Seul' : (item.selectedOption === 'menu' ? 'Menu' : item.selectedOption)}
+                    </p>
+                  )}
+                  <p className="item-price">{(item.selectedPrice || item.price || 0)} DH</p>
                 </div>
 
                 <div className="cart-item-actions">
                   <div className="quantity-controls">
-                    <button 
+                    <button
                       className="qty-btn"
                       onClick={() => decrementQuantity(item._id)}
                     >
                       <Minus size={16} />
                     </button>
                     <span className="quantity">{item.quantity}</span>
-                    <button 
+                    <button
                       className="qty-btn"
                       onClick={() => incrementQuantity(item._id)}
                     >
@@ -85,10 +97,10 @@ const CartPage = ({ setCurrentPage }) => {
                   </div>
 
                   <div className="item-total">
-                    {item.price * item.quantity} DH
+                    {((item.selectedPrice || item.price || 0) * item.quantity)} DH
                   </div>
 
-                  <button 
+                  <button
                     className="remove-btn"
                     onClick={() => removeFromCart(item._id)}
                   >
@@ -102,7 +114,7 @@ const CartPage = ({ setCurrentPage }) => {
           {/* Order Summary */}
           <div className="order-summary">
             <h2>Résumé de la commande</h2>
-            
+
             <div className="summary-line">
               <span>Sous-total</span>
               <span>{total} DH</span>
@@ -110,7 +122,13 @@ const CartPage = ({ setCurrentPage }) => {
 
             <div className="summary-line">
               <span>Frais de livraison</span>
-              <span>{deliveryFee} DH</span>
+              <span>
+                {deliveryFee === 0 ? (
+                  <span style={{ color: '#10b981' }}>Gratuit</span>
+                ) : (
+                  `${deliveryFee} ${settings.currency || 'DH'}`
+                )}
+              </span>
             </div>
 
             <div className="summary-divider"></div>
@@ -120,14 +138,14 @@ const CartPage = ({ setCurrentPage }) => {
               <span>{finalTotal} DH</span>
             </div>
 
-            <button 
+            <button
               className="checkout-btn"
               onClick={() => setCurrentPage('checkout')}
             >
               Passer la commande
             </button>
 
-            <button 
+            <button
               className="continue-shopping-btn"
               onClick={() => setCurrentPage('menu')}
             >

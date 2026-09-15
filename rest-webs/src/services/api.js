@@ -1,17 +1,32 @@
 // src/services/api.js
 
 import axios from 'axios';
+import toast from 'react-hot-toast';
+import socketService from './socket';
 
-const API_URL = 'http://localhost:5000/api';
+// Utiliser l'URL de l'API depuis les variables d'environnement ou détecter automatiquement
+const getAPIUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  const hostname = window.location.hostname;
+  // Détection intelligente: si le site est déployé sur Vercel ou via HTTPS
+  if (hostname.includes('vercel.app') || window.location.protocol === 'https:') {
+    return 'https://lacanyada-backend.onrender.com/api';
+  }
 
-console.log('🌐 API URL configurée:', API_URL);
+  return `http://${hostname}:5000/api`;
+};
+
+const API_URL = getAPIUrl();
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 30000,
 });
 
 api.interceptors.request.use(
@@ -20,26 +35,49 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log('📤 Requête:', config.method.toUpperCase(), config.url);
+    if (import.meta.env.DEV) {
+      console.debug('📤 Requête:', config.method?.toUpperCase(), config.url);
+    }
     return config;
   },
   (error) => {
-    console.error('❌ Erreur requête:', error);
     return Promise.reject(error);
   }
 );
 
 api.interceptors.response.use(
   (response) => {
-    console.log('📥 Réponse reçue:', response.data);
     return response;
   },
   (error) => {
-    console.error('❌ Erreur réponse:', error.response?.data || error.message);
-    if (error.response?.status === 401) {
-      localStorage.removeItem('adminToken');
-      window.location.href = '/';
+    const status = error.response?.status;
+    const requestUrl = error.config?.url || '';
+
+    // Gestion centralisée 401 Unauthorized
+    if (status === 401) {
+      if (!requestUrl.includes('/auth/login')) {
+        localStorage.removeItem('adminToken');
+        try {
+          socketService.disconnect();
+        } catch (e) {
+          // ignore
+        }
+        window.dispatchEvent(new Event('admin:unauthorized'));
+        toast.error(error.response?.data?.message || 'Session administrateur expirée. Veuillez vous reconnecter.', {
+          id: 'admin-401-session-expired',
+        });
+      }
     }
+
+    // Gestion centralisée 429 Too Many Requests
+    if (status === 429) {
+      const message = error.response?.data?.message || 'Trop de requêtes. Veuillez patienter un instant avant de réessayer.';
+      toast.error(message, {
+        id: 'admin-429-rate-limit',
+        duration: 5000,
+      });
+    }
+
     return Promise.reject(error);
   }
 );
@@ -71,6 +109,16 @@ export const authAPI = {
 
   isAuthenticated: () => {
     return !!localStorage.getItem('adminToken');
+  },
+
+  getMe: async () => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  },
+
+  changePassword: async (passwordData) => {
+    const response = await api.patch('/auth/change-password', passwordData);
+    return response.data;
   },
 };
 
@@ -126,6 +174,16 @@ export const deliverersAPI = {
     const response = await api.patch(`/deliverers/${id}/status`, { status });
     return response.data;
   },
+
+  getCaisse: async () => {
+    const response = await api.get('/deliverers/caisse');
+    return response.data;
+  },
+
+  settleCash: async (id) => {
+    const response = await api.post(`/deliverers/${id}/settle-cash`);
+    return response.data;
+  },
 };
 
 export const menuAPI = {
@@ -177,6 +235,16 @@ export const statsAPI = {
     });
     return response.data;
   },
+
+  getYear: async (year) => {
+    const response = await api.get(`/stats/year/${year}`);
+    return response.data;
+  },
+
+  getTopDishes: async () => {
+    const response = await api.get('/stats/top-dishes');
+    return response.data;
+  },
 };
 
 export const settingsAPI = {
@@ -187,6 +255,72 @@ export const settingsAPI = {
 
   update: async (settings) => {
     const response = await api.patch('/settings', settings);
+    return response.data;
+  },
+};
+
+export const usersAPI = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/users', { params });
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await api.get(`/users/${id}`);
+    return response.data;
+  },
+
+  create: async (userData) => {
+    const response = await api.post('/users', userData);
+    return response.data;
+  },
+
+  updateStatus: async (id, isActive) => {
+    const response = await api.patch(`/users/${id}/status`, { isActive });
+    return response.data;
+  },
+
+  update: async (id, userData) => {
+    const response = await api.put(`/users/${id}`, userData);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await api.delete(`/users/${id}`);
+    return response.data;
+  },
+};
+
+// ==================== EXPENSES ====================
+export const expensesAPI = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/expenses', { params });
+    return response.data;
+  },
+
+  create: async (expenseData) => {
+    const response = await api.post('/expenses', expenseData);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await api.delete(`/expenses/${id}`);
+    return response.data;
+  },
+};
+
+// ==================== SUPPORT ====================
+export const supportAPI = {
+  reportBug: async (bugData) => {
+    const response = await api.post('/support/report', bugData);
+    return response.data;
+  },
+};
+
+// ==================== REVIEWS ====================
+export const reviewsAPI = {
+  getForMenuItem: async (menuId, page = 1) => {
+    const response = await api.get(`/reviews/menu/${menuId}?page=${page}&limit=10`);
     return response.data;
   },
 };

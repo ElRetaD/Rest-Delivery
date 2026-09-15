@@ -23,7 +23,18 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': ['error', {
+        varsIgnorePattern: '^[A-Z_]',
+        argsIgnorePattern: '^(_|[A-Z])',
+        caughtErrorsIgnorePattern: '^_',
+      }],
+    },
+  },
+  // Node.js script — needs `process` global
+  {
+    files: ['check-api-key.js'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 ])

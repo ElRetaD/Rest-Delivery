@@ -22,7 +22,9 @@ export const translations = {
     status: {
       new: 'Nouvelle',
       inProgress: 'En cours',
-      delivered: 'Livrée'
+      delivering: 'En livraison',
+      delivered: 'Livrée',
+      not_delivered: 'Non livrée'
     },
     acceptOrder: 'Accepter',
     deliverer: 'Livreur',
@@ -63,7 +65,9 @@ export const translations = {
     status: {
       new: 'جديدة',
       inProgress: 'في الطريق',
-      delivered: 'تم التوصيل'
+      delivering: 'En livraison',
+      delivered: 'تم التوصيل',
+      not_delivered: 'Non livrée'
     },
     acceptOrder: 'قبول',
     deliverer: 'الموصل',

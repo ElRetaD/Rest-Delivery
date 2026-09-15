@@ -6,10 +6,61 @@
   box-sizing: border-box;
 }
 
+/* CSS Variables for Light/Dark Mode — Premium Design System */
+:root {
+  /* Light Mode */
+  --bg-primary: #f0f2f5;
+  --bg-secondary: #ffffff;
+  --bg-hover: #f8f9fb;
+  --bg-tertiary: #f5f6f8;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --border-color: #e2e8f0;
+  --border-hover: #cbd5e1;
+  --shadow: rgba(0, 0, 0, 0.04);
+  --shadow-hover: rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 10px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 20px 50px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.04);
+  --accent-primary: #facc15;
+  --accent-secondary: #eab308;
+  --accent-glow: rgba(250, 204, 21, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="dark"] {
+  /* Dark Mode — Rich, modern dark */
+  --bg-primary: #0c0f17;
+  --bg-secondary: #151922;
+  --bg-hover: #1e2330;
+  --bg-tertiary: #1a1f2e;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-color: #1e293b;
+  --border-hover: #334155;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-card-hover: 0 10px 25px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2);
+  --shadow-elevated: 0 20px 50px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.25);
+  --accent-primary: #facc15;
+  --accent-secondary: #eab308;
+  --accent-glow: rgba(250, 204, 21, 0.1);
+  --glass-bg: rgba(21, 25, 34, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.06);
+}
+
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f7fa;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary) !important;
+  color: var(--text-primary);
   overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
 }
 
 .app {
@@ -17,10 +68,8 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-}
-
-.app.rtl {
-  direction: rtl;
+  background: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 
 .app.ltr {
@@ -33,37 +82,149 @@ body {
   flex-direction: column;
   overflow: hidden;
   height: 100vh;
+  min-width: 0;
+  background: var(--bg-primary);
+  transition: all 0.3s ease, background-color 0.3s ease;
 }
 
 .content {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 30px;
-  background: #f5f7fa;
+  padding: 28px 32px;
+  background: var(--bg-primary);
   height: calc(100vh - 70px);
+  transition: background-color 0.3s ease, padding 0.3s ease;
+  scroll-behavior: smooth;
 }
 
-/* Scrollbar personnalisé */
+/* Custom scrollbar for content */
 .content::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .content::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 .content::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: var(--text-muted);
+  border-radius: 10px;
 }
 
 .content::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--text-secondary);
 }
 
-/* Pour que les pages prennent toute la largeur */
+/* Pages */
 .page {
   width: 100%;
   min-height: 100%;
+}
+
+.page h1 {
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  transition: color 0.3s ease;
+}
+
+/* Loading Screen */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-screen p {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Sidebar Mobile Overlay */
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .content {
+    padding: 20px 16px !important;
+  }
+}
+
+/* Global Utility Classes */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+}
+
+/* ────────────── GLOBAL FORM INPUT THEMING ────────────── */
+/* Ensures all inputs/selects/textareas adapt correctly
+   to light and dark mode without hardcoded colors */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select,
+textarea {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-hover) !important; /* Slightly stronger border for visibility */
+  font-family: inherit;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"])::placeholder,
+textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent-primary) !important;
+  outline: none;
 }

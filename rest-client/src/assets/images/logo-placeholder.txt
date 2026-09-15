@@ -1,0 +1,10 @@
+يرجى وضع صورة الـ logo هنا باسم: chicken-canyada-logo.png
+أو chicken-canyada-logo.jpg
+
+الملف يجب أن يحتوي على:
+- اسم: Chicken CANYADA
+- تاج ذهبي
+- دجاجة ذهبية محاطة بإكليل
+- نص "Crunchy food" في الأسفل
+- خلفية سوداء
+

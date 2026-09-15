@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import { ShoppingCart, User, Menu as MenuIcon, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useSettings } from '../../context/SettingsContext';
 import './Navbar.css';
 
 const Navbar = ({ currentPage, setCurrentPage }) => {
   const { getItemsCount } = useCart();
+  const { settings } = useSettings();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuItems = [
@@ -17,10 +19,28 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
   ];
 
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        <div className="navbar-logo" onClick={() => setCurrentPage('home')}>
-          🍽️ Mon Restaurant
+    <>
+      {mobileMenuOpen && (
+        <div 
+          className="mobile-menu-backdrop" 
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+      <nav className="navbar">
+        <div className="navbar-container">
+          <div className="navbar-logo" onClick={() => {
+            setCurrentPage('home');
+            setMobileMenuOpen(false);
+          }}>
+          <img 
+            src="/logo.png" 
+            alt="Chicken Canyada Logo" 
+            className="logo-img"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+          <span className="logo-text">{settings.restaurantName}</span>
         </div>
 
         {/* Desktop Menu */}
@@ -66,8 +86,8 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
       </div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="mobile-menu">
+      <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+        <div className="mobile-menu-links">
           {menuItems.map(item => (
             <button
               key={item.id}
@@ -77,12 +97,14 @@ const Navbar = ({ currentPage, setCurrentPage }) => {
                 setMobileMenuOpen(false);
               }}
             >
+              <span className="mobile-nav-bullet"></span>
               {item.label}
             </button>
           ))}
         </div>
-      )}
+      </div>
     </nav>
+    </>
   );
 };
 

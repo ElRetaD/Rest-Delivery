@@ -2,7 +2,19 @@
 
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:5000';
+// Détecter automatiquement l'URL du serveur Socket.io
+const getSocketUrl = () => {
+  if (import.meta.env.VITE_SOCKET_URL) {
+    return import.meta.env.VITE_SOCKET_URL;
+  }
+  const hostname = window.location.hostname;
+  if (hostname.includes('vercel.app') || window.location.protocol === 'https:') {
+    return 'https://lacanyada-backend.onrender.com';
+  }
+  return `http://${hostname}:5000`;
+};
+
+const SOCKET_URL = getSocketUrl();
 
 class SocketService {
   constructor() {
@@ -28,8 +40,20 @@ class SocketService {
       reconnectionAttempts: 5,
     });
 
+    let hasConnectedBefore = false;
+
     this.socket.on('connect', () => {
       console.log('✅ Socket connecté:', this.socket.id);
+      // Rejoindre la room des admins
+      if (token) {
+        this.send('joinAdminRoom');
+      }
+
+      if (hasConnectedBefore) {
+        console.log('🔄 [SocketService] Reconnexion détectée, émission reconnected');
+        this.emit('reconnected');
+      }
+      hasConnectedBefore = true;
     });
 
     this.socket.on('disconnect', (reason) => {
@@ -47,6 +71,7 @@ class SocketService {
   // Déconnexion
   disconnect() {
     if (this.socket) {
+      this.socket.removeAllListeners();
       this.socket.disconnect();
       this.socket = null;
       this.listeners.clear();

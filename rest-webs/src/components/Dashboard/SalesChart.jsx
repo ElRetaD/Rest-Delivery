@@ -4,54 +4,90 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './SalesChart.css';
 
-const SalesChart = ({ data, t }) => {
-  // Format des données pour le graphique
-  const chartData = data || [
-    { day: 'Lun', orders: 12, revenue: 850 },
-    { day: 'Mar', orders: 19, revenue: 1240 },
-    { day: 'Mer', orders: 15, revenue: 980 },
-    { day: 'Jeu', orders: 22, revenue: 1560 },
-    { day: 'Ven', orders: 28, revenue: 1890 },
-    { day: 'Sam', orders: 35, revenue: 2340 },
-    { day: 'Dim', orders: 30, revenue: 2100 },
-  ];
+const SalesChart = ({ data = [], t }) => {
+  // Si pas de données, afficher un message
+  if (!data || data.length === 0) {
+    return (
+      <div className="sales-chart">
+        <h3>{t?.weekSales || 'Ventes de la semaine'}</h3>
+        <div className="chart-placeholder">
+          <p>Aucune donnée disponible</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sales-chart">
-      <h3>📈 Évolution des ventes (7 derniers jours)</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis dataKey="day" stroke="#6b7280" />
-          <YAxis stroke="#6b7280" />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#fff', 
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px' 
-            }}
-          />
-          <Legend />
-          <Line 
-            type="monotone" 
-            dataKey="orders" 
-            stroke="#3b82f6" 
-            strokeWidth={3}
-            name="Commandes"
-            dot={{ fill: '#3b82f6', r: 5 }}
-          />
-          <Line 
-            type="monotone" 
-            dataKey="revenue" 
-            stroke="#10b981" 
-            strokeWidth={3}
-            name="Revenus (DH)"
-            dot={{ fill: '#10b981', r: 5 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <h3>{t?.weekSales || 'Ventes de la semaine'}</h3>
+      <div className="chart-scroll-wrapper">
+        <div className="chart-responsive-container">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="ordersGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.5} />
+              <XAxis 
+                dataKey="day" 
+                stroke="#6b7280"
+                style={{ fontSize: '13px', fontWeight: 500 }}
+                tick={{ fill: 'var(--text-secondary)' }}
+              />
+              <YAxis 
+                stroke="#6b7280"
+                style={{ fontSize: '13px', fontWeight: 500 }}
+                tick={{ fill: 'var(--text-secondary)' }}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'var(--bg-secondary)', 
+                  border: '2px solid var(--border-color)',
+                  borderRadius: '12px',
+                  color: 'var(--text-primary)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                  padding: '12px 16px'
+                }}
+                cursor={{ stroke: '#3b82f6', strokeWidth: 2 }}
+              />
+              <Legend 
+                wrapperStyle={{ paddingTop: '20px' }}
+                iconType="line"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="orders" 
+                stroke="#3b82f6" 
+                strokeWidth={4}
+                name="Commandes"
+                dot={{ fill: '#3b82f6', r: 6, strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{ r: 10, stroke: '#3b82f6', strokeWidth: 3 }}
+                fill="url(#ordersGradient)"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="revenue" 
+                stroke="#10b981" 
+                strokeWidth={4}
+                name="Revenus (DH)"
+                dot={{ fill: '#10b981', r: 6, strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{ r: 10, stroke: '#10b981', strokeWidth: 3 }}
+                fill="url(#revenueGradient)"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default SalesChart;
+

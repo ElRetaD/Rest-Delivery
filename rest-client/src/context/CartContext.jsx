@@ -1,6 +1,6 @@
 // src/context/CartContext.jsx
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const CartContext = createContext();
 
@@ -24,30 +24,46 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
+  // Calculer le total
+  const calculateTotal = useCallback(() => {
+    const sum = cart.reduce((acc, item) => {
+      const itemPrice = item.selectedPrice || item.price || 0;
+      return acc + (itemPrice * item.quantity);
+    }, 0);
+    setTotal(sum);
+  }, [cart]);
+
   // Sauvegarder le panier dans localStorage à chaque changement
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
     calculateTotal();
-  }, [cart]);
-
-  // Calculer le total
-  const calculateTotal = () => {
-    const sum = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-    setTotal(sum);
-  };
+  }, [cart, calculateTotal]);
 
   // Ajouter un article au panier
-  const addToCart = (item) => {
-    const existingItem = cart.find(i => i._id === item._id);
-    
+  const addToCart = (item, qty = 1) => {
+    // Pour les pizzas et tacos, vérifier si c'est le même item avec la même taille/option
+    const itemKey = item.selectedSize || item.selectedOption
+      ? `${item._id}_${item.selectedSize || item.selectedOption}`
+      : item._id;
+
+    const existingItem = cart.find(i => {
+      const iKey = i.selectedSize || i.selectedOption
+        ? `${i._id}_${i.selectedSize || i.selectedOption}`
+        : i._id;
+      return iKey === itemKey;
+    });
+
     if (existingItem) {
-      setCart(cart.map(i => 
-        i._id === item._id 
-          ? { ...i, quantity: i.quantity + 1 }
-          : i
-      ));
+      setCart(cart.map(i => {
+        const iKey = i.selectedSize || i.selectedOption
+          ? `${i._id}_${i.selectedSize || i.selectedOption}`
+          : i._id;
+        return iKey === itemKey
+          ? { ...i, quantity: i.quantity + qty }
+          : i;
+      }));
     } else {
-      setCart([...cart, { ...item, quantity: 1 }]);
+      setCart([...cart, { ...item, quantity: qty }]);
     }
   };
 
@@ -62,7 +78,7 @@ export const CartProvider = ({ children }) => {
       removeFromCart(itemId);
       return;
     }
-    
+
     setCart(cart.map(item =>
       item._id === itemId
         ? { ...item, quantity }
