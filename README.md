@@ -16,18 +16,18 @@ The platform is structured into decoupled, high-performance web applications:
 
 ```
 Rest-Delivery/
-├── rest-client/     # Customer-Facing Web App (Ordering, Cart, Live GPS Tracking)
-└── rest-webs/       # Operations & Kitchen Management Dashboard (Admin ERP, Real-Time Fleet Map)
+├── web-client/     # Customer-Facing Web App (Ordering, Cart, Live GPS Tracking)
+└── web-admin/      # Operations & Kitchen Management Dashboard (Admin ERP, Real-Time Fleet Map)
 ```
 
-### 1. 📱 Customer Web App (`/rest-client`)
+### 1. 📱 Customer Web App (`/web-client`)
 A high-converting, mobile-first web application designed for seamless customer ordering:
 - **Interactive Menu:** Categorized food catalog with customization options, real-time dish availability, and stock statuses.
 - **Cart & Checkout Engine:** Dynamic order calculation, supplement selection, and strict client validation for delivery addresses and phone numbers.
 - **Live Order Tracking:** Real-time courier tracking powered by WebSocket bidirectional updates and interactive maps.
 - **Customer Portal:** Profile management, order history, and instant support issue reporting.
 
-### 2. 📊 Admin & Operations ERP (`/rest-webs`)
+### 2. 📊 Admin & Operations ERP (`/web-admin`)
 A real-time command center for kitchen staff, managers, and dispatchers:
 - **Live Dispatcher Map:** Real-time geolocation tracking of active couriers with delivery routes via Leaflet / OpenStreetMap.
 - **Real-Time Order Kanban:** Zero-refresh state machine management (`New` ➔ `Preparing` ➔ `Ready` ➔ `Delivering` ➔ `Completed`).
@@ -59,7 +59,7 @@ A real-time command center for kitchen staff, managers, and dispatchers:
 
 ### 1. Running the Customer Web App
 ```bash
-cd rest-client
+cd web-client
 npm install
 npm run dev
 ```
@@ -67,7 +67,7 @@ Access the client app at `http://localhost:5173`.
 
 ### 2. Running the Admin Dashboard
 ```bash
-cd rest-webs
+cd web-admin
 npm install
 npm run dev
 ```
@@ -76,7 +76,7 @@ Access the admin dashboard at `http://localhost:5174`.
 ### Environment Configuration
 Both applications provide `env.example` templates. To connect to your backend:
 ```bash
-# rest-client/.env or rest-webs/.env
+# web-client/.env or web-admin/.env
 VITE_API_URL=https://your-backend-api.com/api
 VITE_SOCKET_URL=https://your-backend-api.com
 ```
